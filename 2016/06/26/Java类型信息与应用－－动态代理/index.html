@@ -84,19 +84,52 @@
 
 
 
-<meta name="description" content="ssss">
+<meta name="description" content="本文结构
+
+一、前言
+二、为什么需要RTTI
+三、RTTI在java中的工作原理
+四、类型转化前先做检测
+五、动态代理
+六、动态代理的不足
+
+
+
+一、前言运行时信息使你可以在程序运行时发现和使用类型信息Java在运行时识别对象和类的信息的方式： 1.一种是RTTI，它假定我们在编译时已经知道了所有的类型。 2.另一种是“反射“机制，它允许我们在运行时发现和使用类的信息。这带来的好处是，你可以在程">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java类型信息与应用－－动态代理">
 <meta property="og:url" content="http://yoursite.com/2016/06/26/Java类型信息与应用－－动态代理/index.html">
 <meta property="og:site_name" content="JakingTing">
-<meta property="og:description" content="ssss">
+<meta property="og:description" content="本文结构
+
+一、前言
+二、为什么需要RTTI
+三、RTTI在java中的工作原理
+四、类型转化前先做检测
+五、动态代理
+六、动态代理的不足
+
+
+
+一、前言运行时信息使你可以在程序运行时发现和使用类型信息Java在运行时识别对象和类的信息的方式： 1.一种是RTTI，它假定我们在编译时已经知道了所有的类型。 2.另一种是“反射“机制，它允许我们在运行时发现和使用类的信息。这带来的好处是，你可以在程">
 <meta property="og:image" content="http://img.blog.csdn.net/20160523231829287">
 <meta property="og:image" content="http://img.blog.csdn.net/20160524183735104">
 <meta property="og:image" content="http://img.blog.csdn.net/20160524223126118">
-<meta property="og:updated_time" content="2016-06-26T09:20:09.000Z">
+<meta property="og:updated_time" content="2016-06-27T01:35:14.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java类型信息与应用－－动态代理">
-<meta name="twitter:description" content="ssss">
+<meta name="twitter:description" content="本文结构
+
+一、前言
+二、为什么需要RTTI
+三、RTTI在java中的工作原理
+四、类型转化前先做检测
+五、动态代理
+六、动态代理的不足
+
+
+
+一、前言运行时信息使你可以在程序运行时发现和使用类型信息Java在运行时识别对象和类的信息的方式： 1.一种是RTTI，它假定我们在编译时已经知道了所有的类型。 2.另一种是“反射“机制，它允许我们在运行时发现和使用类的信息。这带来的好处是，你可以在程">
 <meta name="twitter:image" content="http://img.blog.csdn.net/20160523231829287">
 
 
@@ -346,7 +379,8 @@
       
 
       
-        <p>本文结构</p>
+        <a id="more"></a>
+<p>本文结构</p>
 <ul>
 <li><strong>一、前言</strong></li>
 <li><strong>二、为什么需要RTTI</strong></li>
@@ -356,6 +390,7 @@
 <li><strong>六、动态代理的不足</strong></li>
 </ul>
 <hr>
+<!-- more -->
 <h3 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h3><h4 id="运行时信息使你可以在程序运行时发现和使用类型信息"><a href="#运行时信息使你可以在程序运行时发现和使用类型信息" class="headerlink" title="运行时信息使你可以在程序运行时发现和使用类型信息"></a>运行时信息使你可以在程序运行时发现和使用类型信息</h4><h4 id="Java在运行时识别对象和类的信息的方式："><a href="#Java在运行时识别对象和类的信息的方式：" class="headerlink" title="Java在运行时识别对象和类的信息的方式："></a>Java在运行时识别对象和类的信息的方式：</h4><p> 1.一种是RTTI，它假定我们在编译时已经知道了所有的类型。<br> 2.另一种是“反射“机制，它允许我们在运行时发现和使用类的信息。<br>这带来的好处是，你可以在程序运行时发现和使用类型信息</p>
 <h3 id="二、为什么需要RTTI"><a href="#二、为什么需要RTTI" class="headerlink" title="二、为什么需要RTTI"></a>二、为什么需要RTTI</h3><p>以多态为例，如下图基类是Shape（泛型），而派生出来的具体类有Circle，Square和Triangle。<br><img src="http://img.blog.csdn.net/20160523231829287" alt="这里写图片描述"></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Shape</span> </span>&#123;</span><br><span class="line">    <span class="comment">// this 调用当前类的toString()方法，返回实际的内容</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">draw</span><span class="params">()</span></span>&#123; System.out.println(<span class="keyword">this</span> + <span class="string">"draw()"</span>); &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">abstract</span> <span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Circle</span> <span class="keyword">extends</span> <span class="title">Shape</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span></span>&#123; <span class="keyword">return</span> <span class="string">"Circle"</span>; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Square</span> <span class="keyword">extends</span> <span class="title">Shape</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span></span>&#123; <span class="keyword">return</span> <span class="string">"Square"</span>; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Triangle</span> <span class="keyword">extends</span> <span class="title">Shape</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span></span>&#123; <span class="keyword">return</span> <span class="string">"Triangle"</span>; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">    <span class="comment">// 把Shape对象放入List&lt;Shape&gt;的数组的时候会向上转型为Shape，从而丢失了具体的类型信息</span></span><br><span class="line">    List&lt;Shape&gt; shapeList = Arrays.asList(<span class="keyword">new</span> Circle(), <span class="keyword">new</span> Square(), <span class="keyword">new</span> Triangle());</span><br><span class="line">    <span class="comment">// 从数组中取出时，这种容器，实际上所有的元素都当成Object持有，会自动将结果转型为Shape，这就是RTTI的基本的使用。</span></span><br><span class="line">    <span class="keyword">for</span>(Shape shape : shapeList)&#123;</span><br><span class="line">        shape.draw();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -424,6 +459,27 @@
     <div>
       
         
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/images/wechat-reward-image.png" alt="jakingting WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/images/alipay-reward-image.jpg" alt="jakingting Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
 
       
     </div>
@@ -556,6 +612,17 @@
         
 
         <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/jakingting" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
           
         </div>
 
