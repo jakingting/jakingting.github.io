@@ -18,7 +18,7 @@
 <a id="more"></a>
 <h2 id="一、Calls"><a href="#一、Calls" class="headerlink" title="一、Calls"></a>一、Calls</h2><p>HTTP客户端的工作是接受你的<strong>request</strong>，并产生它的<strong>response</strong>。这个在理论上是简单的，但在实践中确是很棘手。</p>
 <h3 id="1-1-请求"><a href="#1-1-请求" class="headerlink" title="1.1 请求"></a>1.1 <a href="http://square.github.io/okhttp/3.x/okhttp/okhttp3/Request.html" target="_blank" rel="external">请求</a></h3><p>每一个HTTP请求中都包含一个URL，一个方法（如<em>GET</em>或<em>POST</em>），和一个请求头列表（<em>headers</em>）。请求还可以含有一个请求体（body）：一个特定内容类型的数据流。</p>
-<p>###1.2 <a href="http://square.github.io/okhttp/3.x/okhttp/okhttp3/Response.html" target="_blank" rel="external">响应</a><br>每一个HTTP响应中都包含一个状态码（如<em>200</em>代表成功，<em>404</em>代表未找​​到），一个响应头列表（<em>headers</em>）和一个可选的响应体（<em>body</em>）。</p>
+<h3 id="1-2-响应"><a href="#1-2-响应" class="headerlink" title="1.2 响应"></a>1.2 <a href="http://square.github.io/okhttp/3.x/okhttp/okhttp3/Response.html" target="_blank" rel="external">响应</a></h3><p>每一个HTTP响应中都包含一个状态码（如<em>200</em>代表成功，<em>404</em>代表未找​​到），一个响应头列表（<em>headers</em>）和一个可选的响应体（<em>body</em>）。</p>
 <h3 id="1-3重写请求"><a href="#1-3重写请求" class="headerlink" title="1.3重写请求"></a>1.3重写请求</h3><p>当你的OkHttp发送一个HTTP请求，你在描述一个高层次的要求：“给我获取这个网址中的这些请求头。”对于正确性和效率，OkHttp发送前会重写你的请求。</p>
 <p>OkHttp可以在原先的请求中添加请求头（<em>headers</em>），包括<em>Content-Length</em>, <em>Transfer-Encoding</em>, <em>User-Agent</em>, <em>Host</em>, <em>Connection</em>, 和 <em>Content-Type</em>。除非请求头已经存在压缩响应，否则它还将添加一个<em>Accept-Encoding</em>请求头。如果你有<em>cookies</em>，OkHttp还将添加一个<em>Cookie</em>请求头。</p>
 <p>一些请求会有一个缓存的响应。当这个缓存的响应不是最新的时候，OkHttp会发送一个有条件的GET来下载更新的响应，如果它比缓存还新。它将会添加需要的请求头，如<em>IF-Modified-Since</em>和<em>If-None-Match</em>。</p>
@@ -26,8 +26,7 @@
 <p>如果一个条件<em>GET</em>是成功的，在指定的规范下，响应来自于网络和缓存的合并。</p>
 <h3 id="1-5后续请求"><a href="#1-5后续请求" class="headerlink" title="1.5后续请求"></a>1.5后续请求</h3><p>当你的请求的URL已经移动，Web服务器将返回一个响应码像<em>302</em>，以表明本文档的新的URL。OkHttp将按照重定向检索最终响应。</p>
 <p>如果响应问题是一个的授权盘问，OkHttp将会要求身份验证（如果有一个已经配置好），以满足盘问。如果身份验证提供凭据，请求将会带着凭证进行重试。</p>
-<p>###1.6请求重试</p>
-<p>有时连接失败：要么是连接池已经过时和断开，或是Web服务器本身无法达成。如果有一个是可用的，OkHttp将会使用不同的路由进行请求重试。</p>
+<h3 id="1-6请求重试"><a href="#1-6请求重试" class="headerlink" title="1.6请求重试"></a>1.6请求重试</h3><p>有时连接失败：要么是连接池已经过时和断开，或是Web服务器本身无法达成。如果有一个是可用的，OkHttp将会使用不同的路由进行请求重试。</p>
 <h3 id="1-7-呼叫"><a href="#1-7-呼叫" class="headerlink" title="1.7 呼叫"></a>1.7 <a href="http://square.github.io/okhttp/3.x/okhttp/okhttp3/Call.html" target="_blank" rel="external">呼叫</a></h3><p>随着重写，重定向，后续和重试，你简单的要求可能会产生很多请求和响应。OkHttp使用呼叫（<em>Call</em>）并通过许多必要的中间请求和响应来满足你请求的任务模型。通常情况，这是不是很多！如果您的网址被重定向，或者如果您故障转移到另一个IP地址，但它会欣慰的知道你的代码会继续工作。</p>
 <p>通过以下两种方式进行呼叫：</p>
 <ul>
@@ -38,8 +37,7 @@
 <h3 id="1-8调度"><a href="#1-8调度" class="headerlink" title="1.8调度"></a>1.8调度</h3><p>对于同步调用，你带上你自己的线程，并负责管理并发请求。并发连接过多浪费资源; 过少的危害等待时间。</p>
 <p>对于异步调用，<a href="http://square.github.io/okhttp/3.x/okhttp/okhttp3/Dispatcher.html" target="_blank" rel="external">调度</a>实现了最大同时请求策略。您可以设置每个Web服务器最大值（默认值为5），和整体值（默认为64）。</p>
 <h2 id="二、Connections"><a href="#二、Connections" class="headerlink" title="二、Connections"></a>二、Connections</h2><p>虽然只提供了URL，但是OkHttp计划使用三种类型连接到你的web服务器：URL, Address, 和 Route。</p>
-<p>###2.1<a href="http://square.github.io/okhttp/3.x/okhttp/okhttp3/HttpUrl.html" target="_blank" rel="external">URLs</a></p>
-<p>URLs（如<a href="https://github.com/square/okhttp）是HTTP和因特网的基础。除了是网络上通用和分散的命名方案，他们还指定了如何访问网络资源。" target="_blank" rel="external">https://github.com/square/okhttp）是HTTP和因特网的基础。除了是网络上通用和分散的命名方案，他们还指定了如何访问网络资源。</a></p>
+<h3 id="2-1URLs"><a href="#2-1URLs" class="headerlink" title="2.1URLs"></a>2.1<a href="http://square.github.io/okhttp/3.x/okhttp/okhttp3/HttpUrl.html" target="_blank" rel="external">URLs</a></h3><p>URLs（如<a href="https://github.com/square/okhttp）是HTTP和因特网的基础。除了是网络上通用和分散的命名方案，他们还指定了如何访问网络资源。" target="_blank" rel="external">https://github.com/square/okhttp）是HTTP和因特网的基础。除了是网络上通用和分散的命名方案，他们还指定了如何访问网络资源。</a></p>
 <h5 id="URLs摘要："><a href="#URLs摘要：" class="headerlink" title="URLs摘要："></a>URLs摘要：</h5><ul>
 <li>它们指定该呼叫(<em>Call</em>)可以被明文（<em>HTTP</em>）或加密的（<em>HTTPS</em>），但不指定用哪种加密算法。他们也不指定如何验证对方的证书（<em><a href="https://developer.android.com/reference/javax/net/ssl/HostnameVerifier.html" target="_blank" rel="external">HostnameVerifier</a></em>）或证书可以信任（<em><a href="https://developer.android.com/reference/org/apache/http/conn/ssl/SSLSocketFactory.html" target="_blank" rel="external">SSLSocketFactory</a></em>）。</li>
 <li>他们不指定是否应使用特定的代理服务器或如何与该代理服务器进行身份验证。</li>
